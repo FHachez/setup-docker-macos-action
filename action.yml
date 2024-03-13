@@ -52,6 +52,10 @@ runs:
         echo "::group::Updating Homebrew"
         brew update --preinstall
         echo "::endgroup::"
+        echo "::group::pin python::"
+        brew pin python
+        echo "::endgroup::"
+
       shell: bash
     - name: Install Lima
       env:
@@ -94,8 +98,11 @@ runs:
         HOMEBREW_NO_INSTALL_UPGRADE: "1"
         HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: "1"
       run: |
+        echo "install QEMU"
+        #brew install qemu
+        
         echo "::group::Installing QEMU, Docker client, and Docker Compose"
-        brew install docker docker-compose qemu 2>&1 | tee install.log
+        brew install docker docker-compose --overwrite 2>&1 | tee install.log
         echo "::endgroup::"
       shell: bash
     - name: Configure Docker Compose plugin
@@ -109,7 +116,7 @@ runs:
         if grep -q "qemu 8.1.0 is already installed" install.log
         then
             echo "Detected broken QEMU bottle installed by brew, removing and reinstalling."
-            brew reinstall qemu
+            #brew reinstall qemu
         fi
       shell: bash
     - name: Upgrade QEMU
